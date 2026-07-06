@@ -1,0 +1,22 @@
+# Pinned workspace snapshots — the single source of truth for this course release.
+#
+# Rules:
+#   * Every course release names an exact tag for every repo it touches.
+#   * "UNPINNED" means the tag has not been cut yet; setup.sh skips the clone
+#     and `course doctor` reports it as a warning. Cut the tags (prerequisite
+#     zero) and replace these before the first real student runs the course.
+#   * Within each section, keep `url` before `tag` (setup.sh's parser relies on it).
+#   * More repos join as phases activate (ndn-ext for Phase 3 electives,
+#     ndf-core for Phase 4 once the refounding lands).
+
+[repos.ndn-rs]
+url = "https://github.com/Quarmire/ndn-rs.git"
+tag = "v0.1.0-alpha.2"
+
+[repos.ndn-fwd]
+url = "https://github.com/Quarmire/ndn-fwd.git"
+tag = "v0.1.0-alpha.2"                              # Module 0 forwarder labs
+
+[repos.ndn-ext]
+url = "https://github.com/Quarmire/ndn-ext.git"
+tag = "v0.1.0-alpha.2"                              # Phase 3 electives

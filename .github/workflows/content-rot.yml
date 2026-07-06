@@ -1,0 +1,45 @@
+# Content-rot detection: rebuild all course material against the pinned
+# snapshots on a schedule, so drift is a report, not a surprise.
+#
+# Two-stage design:
+#   * Today (no exercises depend on pinned repos yet): build the workspace and
+#     run the solution check if a solutions branch exists.
+#   * Once exercises path-dep into ../ndn-rs etc.: this job clones the pins
+#     (setup.sh does that once pins.toml is cut) and any breakage against the
+#     pinned tags means the course content itself regressed — hard red.
+#   * Rebasing the course onto NEWER tags is done deliberately: bump pins.toml
+#     in a PR and let this workflow produce the delta report.
+name: content-rot
+
+on:
+  schedule:
+    - cron: "43 7 * * 1"
+  workflow_dispatch:
+
+jobs:
+  rot-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (respects rust-toolchain.toml)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Fetch pinned snapshots (no-op while UNPINNED)
+        run: bash setup.sh
+
+      - name: Stubs must always build
+        run: cargo build --workspace
+
+      - name: Solutions must always pass (when the solutions branch exists)
+        run: |
+          if git ls-remote --exit-code --heads origin solutions >/dev/null 2>&1; then
+            git fetch origin solutions --depth 1
+            git checkout FETCH_HEAD -- exercises/
+            cargo test --workspace
+            cargo clippy --workspace --all-targets -- -D warnings
+          else
+            echo "no solutions branch yet — skipping solution verification"
+          fi

@@ -1,0 +1,5 @@
+# Pin the exact toolchain version when the course pins are cut, so every
+# student compiles with the same compiler the witnesses were written against.
+[toolchain]
+channel = "stable"   # TODO: replace with an exact version, e.g. "1.85.0"
+components = ["clippy", "rustfmt"]

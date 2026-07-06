@@ -1,0 +1,34 @@
+# The onboarding promise is a tested invariant: fresh container, three
+# commands, green doctor — inside the time budget or this workflow is red.
+name: time-to-first-green
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1" # weekly, so environment drift is caught even without pushes
+
+env:
+  # Seconds allowed for setup.sh end-to-end (clone of pins excluded while UNPINNED).
+  BUDGET_SECONDS: 600
+
+jobs:
+  quickstart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (respects rust-toolchain.toml)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Run the quick start under the budget
+        run: timeout "${BUDGET_SECONDS}" bash setup.sh
+
+      - name: Doctor must be green
+        run: ./course doctor
+
+      - name: Workspace builds with stubs (exercises red is fine; broken is not)
+        run: cargo build --workspace

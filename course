@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Thin wrapper so the three-command quick start reads naturally.
+exec cargo run --quiet -p xtask -- "$@"

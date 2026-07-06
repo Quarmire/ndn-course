@@ -1,0 +1,3 @@
+[alias]
+# `cargo course doctor` etc. — same CLI as ./course, for people who prefer cargo verbs.
+course = "run --quiet -p xtask --"
