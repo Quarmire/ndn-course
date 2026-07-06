@@ -1,0 +1,13 @@
+[package]
+name = "m06-name-api"
+edition = "2021"
+publish = false
+
+[dependencies]
+
+[dev-dependencies]
+# The real Name / NameComponent, used ONLY by the witness as a grading ORACLE for
+# your canonical ordering. Your own code (src/lib.rs) does not depend on it — you
+# design the type yourself, and the oracle tells you where you diverge.
+ndn-foundation-types = { path = "../../../ndn-rs/crates/core/ndn-foundation-types" }
+bytes = "1"
