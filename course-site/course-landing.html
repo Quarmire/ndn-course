@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ndn-course — Learn Rust where it's real</title>
+<meta name="description" content="An applied Rust course taught inside a working named-data networking stack. Sixteen modules, two capstones, and you leave as a contributor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EBEFF2;
+    --paper-deep:#DFE5EA;
+    --ink:#141E2C;
+    --ink-soft:#3A4656;
+    --steel:#75828F;
+    --line:#C3CCD4;
+    --amber:#B36F0B;        /* Interest */
+    --amber-bright:#E29B27;
+    --teal:#136E66;         /* Data */
+    --teal-bright:#2BA396;
+    --panel:#0E1622;
+    --panel-edge:#233144;
+    --panel-ink:#D8E1EB;
+    --panel-dim:#8DA0B5;
+    --display:"Bricolage Grotesque",system-ui,sans-serif;
+    --serif:"Source Serif 4",Georgia,serif;
+    --mono:"IBM Plex Mono","SF Mono",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--teal);text-decoration-thickness:1px;text-underline-offset:3px}
+  a:hover{color:var(--amber)}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:22px 0 0;
+  }
+  .wordmark{font-family:var(--mono);font-weight:600;font-size:15px;letter-spacing:.02em}
+  .wordmark .tld{color:var(--steel);font-weight:400}
+  .topnav{font-family:var(--mono);font-size:12.5px;display:flex;gap:22px}
+  .topnav a{color:var(--ink-soft);text-decoration:none}
+  .topnav a:hover{color:var(--amber)}
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 30px}
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;font-weight:500;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--steel);
+    margin-bottom:22px;
+  }
+  .eyebrow b{color:var(--amber);font-weight:600}
+  h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(40px,6.4vw,72px);
+    line-height:1.02;
+    letter-spacing:-0.015em;
+    max-width:15ch;
+  }
+  h1 .alt{color:var(--teal)}
+  .hero-grid{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:56px;
+    align-items:end;margin-top:30px;
+  }
+  .lede{font-size:19.5px;max-width:52ch;color:var(--ink-soft)}
+  .lede strong{color:var(--ink);font-weight:600}
+
+  /* terminal card */
+  .terminal{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:18px 20px 20px;
+    font-family:var(--mono);
+    font-size:13.5px;
+    color:var(--panel-ink);
+    box-shadow:0 18px 40px -22px rgba(14,22,34,.55);
+  }
+  .terminal .tbar{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .terminal .dot{width:9px;height:9px;border-radius:50%;background:var(--panel-edge)}
+  .terminal .tlabel{margin-left:auto;font-size:11px;color:var(--panel-dim);letter-spacing:.08em}
+  .terminal .line{white-space:nowrap;overflow-x:auto;padding:3px 0}
+  .terminal .ps{color:var(--teal-bright);user-select:none}
+  .terminal .cmt{color:var(--panel-dim)}
+  .terminal .ok{color:var(--amber-bright)}
+
+  /* ---------- the wire (signature) ---------- */
+  .wire-block{padding:44px 0 10px}
+  .wire-scroll{overflow-x:auto;padding-bottom:6px}
+  .wire{
+    display:inline-flex;align-items:flex-start;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:16px 4px 0;min-width:100%;
+  }
+  .seg{display:flex;flex-direction:column;flex:none}
+  .seg .bytes{display:flex}
+  .byte{
+    font-family:var(--mono);font-size:15px;font-weight:500;
+    padding:4px 7px;color:var(--ink);
+    opacity:0;transform:translateY(6px);
+    animation:byte-in .45s ease forwards;
+  }
+  .seg .tag{
+    font-family:var(--mono);font-size:10.5px;font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;
+    border-top:2px solid var(--steel);
+    margin:8px 6px 14px;padding-top:6px;color:var(--steel);
+    opacity:0;animation:tag-in .5s ease forwards;
+    white-space:nowrap;
+  }
+  .seg.t-data .tag{border-color:var(--teal);color:var(--teal)}
+  .seg.t-name .tag{border-color:var(--amber);color:var(--amber)}
+  .seg.t-val .tag{border-color:var(--ink);color:var(--ink)}
+  @keyframes byte-in{to{opacity:1;transform:none}}
+  @keyframes tag-in{to{opacity:1}}
+  .wire-caption{
+    font-family:var(--serif);font-style:italic;font-size:15.5px;
+    color:var(--ink-soft);margin-top:14px;max-width:64ch;
+  }
+  .wire-caption b{font-style:normal;color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){
+    .byte,.seg .tag{animation:none;opacity:1;transform:none}
+    html{scroll-behavior:auto}
+  }
+
+  /* ---------- sections ---------- */
+  section{padding:76px 0 8px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:34px}
+  .sec-hex{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--amber);letter-spacing:.06em}
+  h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,36px);letter-spacing:-0.01em}
+
+  /* outcomes ledger */
+  .ledger{border-top:1px solid var(--line)}
+  .ledger-row{
+    display:grid;grid-template-columns:270px 1fr;gap:28px;
+    padding:22px 0;border-bottom:1px solid var(--line);
+  }
+  .ledger-row dt{
+    font-family:var(--display);font-weight:600;font-size:19px;line-height:1.25;
+  }
+  .ledger-row dd{color:var(--ink-soft);max-width:62ch}
+  .ledger-row dd .proof{
+    display:block;margin-top:6px;
+    font-family:var(--mono);font-size:12px;color:var(--teal);
+  }
+  .ledger-row dd .proof::before{content:"proof → ";color:var(--steel)}
+
+  /* journey dissection */
+  .journey{border-top:1px solid var(--line)}
+  .phase{
+    display:grid;grid-template-columns:120px 1fr 260px;gap:24px;
+    padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline;
+  }
+  .phase .offset{font-family:var(--mono);font-size:12.5px;color:var(--steel);font-weight:500}
+  .phase .offset b{color:var(--amber);font-weight:600;display:block}
+  .phase h3{font-family:var(--display);font-weight:700;font-size:20px;margin-bottom:4px}
+  .phase p{color:var(--ink-soft);font-size:15.5px;max-width:58ch}
+  .phase .checkpoint{
+    font-family:var(--serif);font-style:italic;font-size:15.5px;color:var(--teal);
+  }
+  .phase .checkpoint::before{content:"“"}
+  .phase .checkpoint::after{content:"”"}
+  .phase.capstone h3{color:var(--amber)}
+
+  /* artifacts grid */
+  .artifacts{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  }
+  .art{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px 16px 14px;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .art:hover{transform:translateY(-3px);box-shadow:0 14px 26px -18px rgba(14,22,34,.4);border-color:var(--steel)}
+  .art .m{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--amber);text-transform:uppercase}
+  .art h3{font-family:var(--display);font-weight:600;font-size:16.5px;margin:6px 0 5px;line-height:1.25}
+  .art p{font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+  @media (prefers-reduced-motion:reduce){.art{transition:none}.art:hover{transform:none}}
+
+  /* how it works */
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:38px}
+  .how h3{font-family:var(--display);font-weight:700;font-size:19px;margin-bottom:10px}
+  .how h3 .k{color:var(--teal)}
+  .how p{color:var(--ink-soft);font-size:15.5px}
+  .how p+p{margin-top:10px}
+  .how .loop{font-family:var(--mono);font-size:12.5px;color:var(--amber);font-weight:600}
+
+  /* honesty panel */
+  .honest{
+    background:var(--panel);color:var(--panel-ink);
+    border-radius:12px;margin-top:70px;
+    padding:46px 48px;
+    display:grid;grid-template-columns:1fr 1fr;gap:44px;
+  }
+  .honest h2{color:#fff}
+  .honest p{color:var(--panel-dim);font-size:15.5px;max-width:52ch}
+  .honest p b{color:var(--panel-ink);font-weight:600}
+  .honest ul{list-style:none;margin-top:4px}
+  .honest li{
+    font-family:var(--mono);font-size:13px;color:var(--panel-ink);
+    padding:10px 0;border-bottom:1px solid var(--panel-edge);
+  }
+  .honest li:first-child{border-top:1px solid var(--panel-edge)}
+  .honest li .st{color:var(--teal-bright);font-weight:600}
+
+  /* prereqs strip */
+  .prereq{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;
+  }
+  .prereq div{
+    border-left:2px solid var(--amber);padding:4px 0 4px 16px;
+  }
+  .prereq .k{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+  .prereq .v{font-family:var(--display);font-weight:600;font-size:17px;margin-top:3px}
+
+  /* footer */
+  footer{padding:90px 0 60px}
+  .foot-cta{
+    display:grid;grid-template-columns:1fr .9fr;gap:56px;align-items:center;
+    border-top:1px solid var(--line);padding-top:56px;
+  }
+  .foot-cta h2{font-size:clamp(28px,4vw,44px);font-weight:800;max-width:14ch}
+  .colophon{
+    margin-top:60px;font-family:var(--mono);font-size:11.5px;color:var(--steel);
+    display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+
+  /* responsive */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:34px}
+    .artifacts{grid-template-columns:repeat(2,1fr)}
+    .how{grid-template-columns:1fr;gap:28px}
+    .honest{grid-template-columns:1fr;padding:34px 26px}
+    .foot-cta{grid-template-columns:1fr;gap:30px}
+    .phase{grid-template-columns:88px 1fr;grid-template-rows:auto auto}
+    .phase .checkpoint{grid-column:2}
+    .ledger-row{grid-template-columns:1fr;gap:6px}
+  }
+  @media (max-width:560px){
+    .artifacts{grid-template-columns:1fr}
+    .topnav{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="wordmark">ndn-course<span class="tld"> / applied rust</span></div>
+    <nav class="topnav" aria-label="Sections">
+      <a href="#leave">Outcomes</a>
+      <a href="#journey">The journey</a>
+      <a href="#build">What you build</a>
+      <a href="#how">How it works</a>
+    </nav>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <div class="hero">
+    <p class="eyebrow">An applied Rust course · taught inside <b>ndn-workspace</b> + <b>NDF</b>, a working named-data networking stack</p>
+    <h1>Learn Rust where it's <span class="alt">real.</span></h1>
+    <div class="hero-grid">
+      <p class="lede">
+        Sixteen modules and two capstones inside a live systems codebase — not toy exercises.
+        You'll parse bytes, master threads and processes, ship a network face,
+        debug like it's a discipline, and <strong>leave as a contributor</strong> with the
+        judgment to work on any large Rust project.
+      </p>
+      <div class="terminal" role="img" aria-label="Quick start: three terminal commands">
+        <div class="tbar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="tlabel">minutes to first packet — tested in CI</span>
+        </div>
+        <div class="line"><span class="ps">$</span> git clone https://github.com/Quarmire/ndn-course</div>
+        <div class="line"><span class="ps">$</span> ./setup.sh   <span class="cmt"># pinned toolchain + snapshots</span></div>
+        <div class="line"><span class="ps">$</span> course start</div>
+        <div class="line"><span class="ok">✓ doctor green — forwarder is running. Module 0 begins.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= THE WIRE (signature) ================= -->
+  <div class="wire-block" aria-label="A decoded NDN Data packet">
+    <div class="wire-scroll">
+      <div class="wire">
+        <div class="seg t-data">
+          <div class="bytes"><span class="byte" style="animation-delay:.05s">06</span><span class="byte" style="animation-delay:.12s">15</span></div>
+          <div class="tag" style="animation-delay:1.6s">Data · len 21</div>
+        </div>
+        <div class="seg t-name">
+          <div class="bytes"><span class="byte" style="animation-delay:.19s">07</span><span class="byte" style="animation-delay:.26s">0D</span></div>
+          <div class="tag" style="animation-delay:1.75s">Name · len 13</div>
+        </div>
+        <div class="seg t-val">
+          <div class="bytes"><span class="byte" style="animation-delay:.33s">08</span><span class="byte" style="animation-delay:.40s">03</span><span class="byte" style="animation-delay:.47s">6E</span><span class="byte" style="animation-delay:.54s">64</span><span class="byte" style="animation-delay:.61s">6E</span></div>
+          <div class="tag" style="animation-delay:1.9s">"ndn"</div>
+        </div>
+        <div class="seg t-val">
+          <div class="bytes"><span class="byte" style="animation-delay:.68s">08</span><span class="byte" style="animation-delay:.75s">06</span><span class="byte" style="animation-delay:.82s">63</span><span class="byte" style="animation-delay:.89s">6F</span><span class="byte" style="animation-delay:.96s">75</span><span class="byte" style="animation-delay:1.03s">72</span><span class="byte" style="animation-delay:1.10s">73</span><span class="byte" style="animation-delay:1.17s">65</span></div>
+          <div class="tag" style="animation-delay:2.05s">"course"</div>
+        </div>
+        <div class="seg t-data">
+          <div class="bytes"><span class="byte" style="animation-delay:1.24s">15</span><span class="byte" style="animation-delay:1.31s">04</span><span class="byte" style="animation-delay:1.38s">72</span><span class="byte" style="animation-delay:1.45s">75</span><span class="byte" style="animation-delay:1.52s">73</span><span class="byte" style="animation-delay:1.59s">74</span></div>
+          <div class="tag" style="animation-delay:2.2s">Content · "rust"</div>
+        </div>
+      </div>
+    </div>
+    <p class="wire-caption">A real Data packet named <b>/ndn/course</b>, carrying <b>"rust"</b> — and you just read it off the wire.
+    By module 3 you'll have <b>written the parser</b>. By module 15, the signature we omitted here is <b>yours to verify</b>.</p>
+  </div>
+
+  <!-- ================= OUTCOMES ================= -->
+  <section id="leave">
+    <div class="sec-head"><span class="sec-hex">T=0x01</span><h2>What you leave with</h2></div>
+    <dl class="ledger">
+      <div class="ledger-row">
+        <dt>Contributor status, not a certificate</dt>
+        <dd>The final capstone is a PR-quality contribution to ndn-workspace or NDF, taken through design review, implementation, witness tests, and review rounds — the same flow the maintainers use.
+          <span class="proof">Capstone B · a mergeable-quality contribution with your name on it</span></dd>
+      </div>
+      <div class="ledger-row">
+        <dt>Fluency on large codebases</dt>
+        <dd>You train inside a ~60-crate, multi-repo workspace from day one: navigating, reading tests as documentation, and growing it under its own dependency rules. That skill transfers to any big Rust project.
+          <span class="proof">M1 scavenger hunt → M12 your own crate, placed under the workspace's growth doctrine</span></dd>
+      </div>
+      <div class="ledger-row">
+        <dt>The machine, not just the syntax</dt>
+        <dd>Every module has an under-the-hood strand — assembly on Compiler Explorer, measured allocation costs, cache-line labs, what <em>.await</em> compiles to — so you derive answers instead of memorizing them.
+          <span class="proof">benchmarks and asm readings attached to your own code, every phase</span></dd>
+      </div>
+      <div class="ledger-row">
+        <dt>Debugging as a discipline</dt>
+        <dd>Bugs are a <em>when</em>, not an <em>if</em>. You learn both halves of the covenant: prevent what you can (types, assertions, clippy, tests) and diagnose the rest fast (debuggers, bisect, hypothesis logs) — in code written to be diagnosable, with honest comments and logs that earn their place.
+          <span class="proof">M5 planted-bug hunts · a bug journal reviewed at every checkpoint</span></dd>
+      </div>
+      <div class="ledger-row">
+        <dt>Architectural judgment</dt>
+        <dd>You practice the genre of real design decisions — written decision notes in the project's own ratified format, defended under review — before both capstones require a plan you then execute methodically.
+          <span class="proof">M14 decision note at ratifiable quality · proposal-gated capstones</span></dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ================= JOURNEY ================= -->
+  <section id="journey">
+    <div class="sec-head"><span class="sec-hex">T=0x02</span><h2>The journey, dissected</h2></div>
+    <div class="journey">
+      <div class="phase">
+        <div class="offset"><b>Phase 0</b>M0–M1</div>
+        <div><h3>Orientation</h3><p>Three commands to a running forwarder. Then learn to navigate a real workspace: trace one packet through the engine with the code open.</p></div>
+        <div class="checkpoint">I can run it and find things</div>
+      </div>
+      <div class="phase">
+        <div class="offset"><b>Phase 1</b>M2–M5</div>
+        <div><h3>Bytes, memory, bugs</h3><p>Bit-level fluency, a TLV codec of your own, ownership drills that build real muscle — then the debugging module: tools, mindset, comments, and logs.</p></div>
+        <div class="checkpoint">I can build, test, and debug a codec</div>
+      </div>
+      <div class="phase">
+        <div class="offset"><b>Phase 2</b>M6–M8</div>
+        <div><h3>Types that carry meaning</h3><p>API design on purpose, lifetimes in anger through zero-copy parsing, and dispatch decisions backed by assembly — proven by fuzzing your own parser.</p></div>
+        <div class="checkpoint">I can design an API and prove a parser</div>
+      </div>
+      <div class="phase">
+        <div class="offset"><b>Phase 3</b>M9–M12</div>
+        <div><h3>Threads, processes, async</h3><p>OS-level mastery first — spawn threads, orchestrate processes, drive the forwarder daemon over IPC — then shared state, then async as compiled state machines. Ends with a real component: your own network face.</p></div>
+        <div class="checkpoint">I can add a real component</div>
+      </div>
+      <div class="phase">
+        <div class="offset"><b>Phase 4</b>M13–M15</div>
+        <div><h3>Architecture &amp; NDF</h3><p>Macros when warranted, the NDF design corpus as a masterclass in architectural writing, and the trust machinery — verifier steps graded against the project's own conformance vectors.</p></div>
+        <div class="checkpoint">I can decide and defend</div>
+      </div>
+      <div class="phase capstone">
+        <div class="offset"><b>Capstones</b>A + B</div>
+        <div><h3>Build, then contribute</h3><p>An application of your own on the stack, then a real contribution to the project — both proposal-gated: design doc and decision notes reviewed before a line of code.</p></div>
+        <div class="checkpoint">I am a contributor</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ARTIFACTS ================= -->
+  <section id="build">
+    <div class="sec-head"><span class="sec-hex">T=0x03</span><h2>What you'll build along the way</h2></div>
+    <div class="artifacts">
+      <div class="art"><div class="m">M3</div><h3>mini-TLV codec</h3><p>Your first real crate — a reader/writer for the wire format, against a hidden witness suite.</p></div>
+      <div class="art"><div class="m">M5</div><h3>A bug journal</h3><p>Hypothesis-driven fixes for planted bugs — then every real bug you meet, for the rest of the course.</p></div>
+      <div class="art"><div class="m">M7</div><h3>Zero-copy extractor</h3><p>A borrowed parser with a benchmark report proving the copies you removed.</p></div>
+      <div class="art"><div class="m">M8</div><h3>A fuzzed parser</h3><p>proptest + cargo-fuzz turned loose on your own codec. Findings get fixed and journaled.</p></div>
+      <div class="art"><div class="m">M9</div><h3>Process orchestrator</h3><p>Spawn the forwarder as a child process, drive it over pipes, assert on its logs, shut it down cleanly.</p></div>
+      <div class="art"><div class="m">M10</div><h3>Sharded PIT</h3><p>A concurrent pending-Interest table that survives the provided race harness.</p></div>
+      <div class="art"><div class="m">M12</div><h3>A network face</h3><p>A real transport wired into the forwarder behind a feature flag, with an audit-style witness test.</p></div>
+      <div class="art"><div class="m">M15</div><h3>Verifier steps</h3><p>Pieces of the conforming verifier, graded against the project's frozen conformance vectors.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= HOW ================= -->
+  <section id="how">
+    <div class="sec-head"><span class="sec-hex">T=0x04</span><h2>How it works</h2></div>
+    <div class="how">
+      <div>
+        <h3><span class="loop">toy → real → constraint</span></h3>
+        <p>Every concept lands three times: you build a toy version, you find the production version in the workspace, then you use it under constraint — refactor katas, signature-locked drills, planted-bug hunts.</p>
+        <p>Recognition isn't recall, and recall isn't fluency. The loop is how a concept becomes a muscle.</p>
+      </div>
+      <div>
+        <h3>Three gates, <span class="k">one tutor</span></h3>
+        <p>Every submission passes a mechanical gate (tests, clippy, fmt), a rubric review covering design, comments, and log quality, and a reflection where you defend your choices.</p>
+        <p>An LLM tutor rides along the whole way — Socratic by policy: hints escalate, answers never arrive before your first attempt.</p>
+      </div>
+      <div>
+        <h3>Curated, <span class="k">not conjured</span></h3>
+        <p>Readings are drawn from the codebase itself, its design vault, and the best writing in the field — from CPU internals to atomics to debugging classics — a web of real knowledge, not just one book.</p>
+        <p>The Rust Book stays linked as a reference. It is never assigned as homework.</p>
+      </div>
+    </div>
+
+    <!-- honesty panel -->
+    <div class="honest">
+      <div>
+        <h2>Built on a living codebase — on purpose</h2>
+        <p>A course frozen against finished software teaches archaeology. This one is pinned to tagged snapshots of an <b>actively developed</b> stack, so your learning path is stable while your capstone points at the moving frontier — and your contribution lands somewhere that matters.</p>
+      </div>
+      <ul>
+        <li><span class="st">pinned</span> · every course release locks to named repo tags</li>
+        <li><span class="st">tested</span> · the 3-command quick start runs in CI on a fresh container</li>
+        <li><span class="st">honest</span> · the project documents its own known failures; so will you</li>
+        <li><span class="st">graded by oracles</span> · conformance vectors, not vibes</li>
+      </ul>
+    </div>
+
+    <!-- prereqs -->
+    <div class="prereq">
+      <div><div class="k">You bring</div><div class="v">Rust Book ch. 1–6, roughly</div></div>
+      <div><div class="k">You give</div><div class="v">~10 hours a week, self-paced</div></div>
+      <div><div class="k">It takes</div><div class="v">~7 months, gates not calendar</div></div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="foot-cta">
+      <h2>First packet in minutes. First contribution in months.</h2>
+      <div class="terminal" role="img" aria-label="Quick start commands repeated">
+        <div class="tbar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="tlabel">start here</span>
+        </div>
+        <div class="line"><span class="ps">$</span> git clone https://github.com/Quarmire/ndn-course</div>
+        <div class="line"><span class="ps">$</span> ./setup.sh</div>
+        <div class="line"><span class="ps">$</span> course start</div>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>ndn-course · an applied Rust course on ndn-workspace + NDF</span>
+      <span>Data · <span style="color:var(--teal)">teal</span> — Interest · <span style="color:var(--amber)">amber</span> · like the diagrams you'll draw</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

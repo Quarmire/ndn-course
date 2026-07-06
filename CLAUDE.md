@@ -64,5 +64,6 @@ is part of every checkpoint review.
 - `README.md` — course shape and gates. `pins.toml` — which workspace tags this
   release targets. `exercises/<name>/SPEC.md` — the contract the student builds
   against. Sibling repos live at `../ndn-rs`, `../ndn-fwd`, etc.
-- The syllabus (source of truth for module intent) lives with the course
-  author; exercises carry their own SPEC + rubric and are self-describing.
+- `docs/syllabus.md` — source of truth for module intent (the 16-module map,
+  M0–M15 + two capstones). `course-site/course-landing.html` — the public front
+  door. Exercises also carry their own SPEC + rubric and are self-describing.

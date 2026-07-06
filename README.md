@@ -5,7 +5,7 @@ a working named-data networking stack. Sixteen modules, two capstones, and you l
 as a contributor.
 
 ```
-git clone <REPO-URL> ndn-course && cd ndn-course
+git clone https://github.com/Quarmire/ndn-course && cd ndn-course
 bash setup.sh
 ./course start
 ```
@@ -52,10 +52,11 @@ symptom, hypothesis trail, fix, lesson.
 
 ## Status
 
-**Scaffold v0.** The `m02-varint` exercise is live and self-contained (it needs
-no pinned repos). Pins in `pins.toml` are `UNPINNED` until the workspace tags are
-cut — `course doctor` will tell you exactly that. Content modules land phase by
-phase; see the syllabus for the full map.
+**Early access.** The pins are cut — `pins.toml` targets `v0.1.0-alpha.2` of
+ndn-rs / ndn-fwd / ndn-ext — and the toolchain is pinned to 1.96.0. Two exercises
+are live: `m02-varint` and `m03-mini-tlv` (both self-contained; they need no
+pinned repos yet). Content modules land phase by phase — see `docs/syllabus.md`
+for the full 16-module map, and `course-site/course-landing.html` for the tour.
 
 ## Layout note
 

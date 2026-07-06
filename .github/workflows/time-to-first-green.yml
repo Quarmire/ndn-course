@@ -10,7 +10,7 @@ on:
     - cron: "17 6 * * 1" # weekly, so environment drift is caught even without pushes
 
 env:
-  # Seconds allowed for setup.sh end-to-end (clone of pins excluded while UNPINNED).
+  # Seconds allowed for setup.sh end-to-end, including the shallow pin clones.
   BUDGET_SECONDS: 600
 
 jobs:

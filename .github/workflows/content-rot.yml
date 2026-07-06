@@ -27,7 +27,7 @@ jobs:
         with:
           components: clippy, rustfmt
 
-      - name: Fetch pinned snapshots (no-op while UNPINNED)
+      - name: Fetch pinned snapshots
         run: bash setup.sh
 
       - name: Stubs must always build
