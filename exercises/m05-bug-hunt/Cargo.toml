@@ -1,0 +1,8 @@
+[package]
+name = "m05-bug-hunt"
+edition = "2021"
+publish = false
+
+# No dependencies. The bugs are in plain logic — you find them with tests,
+# backtraces, and reading, not with a library.
+[dependencies]
