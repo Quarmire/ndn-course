@@ -1,0 +1,10 @@
+[package]
+name = "m07-data-view"
+edition = "2021"
+publish = false
+
+[dependencies]
+# `bytes::Bytes` — the owned, cheap-to-clone, shareable byte handle. This module
+# is about the three ways to hold bytes: borrowed (&[u8]), maybe-owned (Cow), and
+# owned-and-shareable (Bytes). (Already in the lock via ndn-foundation-types.)
+bytes = "1"
