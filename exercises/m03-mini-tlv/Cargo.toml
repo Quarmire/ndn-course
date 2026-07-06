@@ -1,0 +1,8 @@
+[package]
+name = "m03-mini-tlv"
+edition = "2021"
+publish = false
+
+# No dependencies — this exercise is self-contained. You build the reader and
+# writer on the VAR-NUMBER atom from M2 (provided in src/lib.rs).
+[dependencies]
