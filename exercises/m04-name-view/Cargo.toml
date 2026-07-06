@@ -1,0 +1,8 @@
+[package]
+name = "m04-name-view"
+edition = "2021"
+publish = false
+
+# No dependencies — self-contained. You build a borrowed view on the TLV atom
+# from M2/M3 (the decoder is provided in src/lib.rs).
+[dependencies]
