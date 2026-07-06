@@ -1,0 +1,10 @@
+[package]
+name = "m01-reading-the-codebase"
+edition = "2021"
+publish = false
+
+[dependencies]
+# The first exercise to path-dep a real pinned crate: you'll measure the memory
+# footprint of actual ndn-rs types. Resolves once `setup.sh` has cloned ../ndn-rs
+# (pinned to the tag in pins.toml).
+ndn-foundation-types = { path = "../../../ndn-rs/crates/core/ndn-foundation-types" }

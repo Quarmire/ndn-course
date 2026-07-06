@@ -3,10 +3,27 @@
 version = 4
 
 [[package]]
+name = "bytes"
+version = "1.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ae3f5d315924270530207e2a68396c3cc547f6dca3fbdca317cfb1a51edb593"
+
+[[package]]
 name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+
+[[package]]
+name = "m00-zero-to-running"
+version = "0.0.0"
+
+[[package]]
+name = "m01-reading-the-codebase"
+version = "0.0.0"
+dependencies = [
+ "ndn-foundation-types",
+]
 
 [[package]]
 name = "m02-varint"
@@ -21,6 +38,22 @@ name = "memchr"
 version = "2.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
+
+[[package]]
+name = "ndn-foundation-types"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "ndn-tlv",
+ "smallvec",
+]
+
+[[package]]
+name = "ndn-tlv"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+]
 
 [[package]]
 name = "proc-macro2"
@@ -81,6 +114,12 @@ dependencies = [
  "serde_core",
  "zmij",
 ]
+
+[[package]]
+name = "smallvec"
+version = "1.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
 
 [[package]]
 name = "syn"

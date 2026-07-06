@@ -1,0 +1,8 @@
+[package]
+name = "m00-zero-to-running"
+edition = "2021"
+publish = false
+
+# No dependencies. This is an observation lab: you record what you find in the
+# real ndn-fwd default config, and the witness checks it against that file.
+[dependencies]
