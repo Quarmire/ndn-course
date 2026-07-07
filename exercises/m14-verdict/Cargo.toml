@@ -1,0 +1,9 @@
+[package]
+name = "m14-verdict"
+edition = "2021"
+publish = false
+
+# No dependencies. This slice is faithful to ndf-core's `spatial::verdict`
+# (ndf-rs/refounding/ndf-core/src/spatial.rs) but self-contained — pure f64 logic,
+# no no_std codec, no verifier pipeline.
+[dependencies]
