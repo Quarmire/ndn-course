@@ -1,0 +1,9 @@
+[package]
+name = "m12-face"
+edition = "2021"
+publish = false
+
+# The real face crates gate transports behind cargo features (e.g. ndn-face's
+# `net`/`local`/`l2`, ndn-fwd's `serial = ["dep:ndn-face-serial"]`). This one is
+# std-only; feature flags are taught in the SPEC + journal, not gated here.
+[dependencies]
