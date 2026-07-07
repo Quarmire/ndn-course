@@ -1,0 +1,8 @@
+[package]
+name = "m08-strategy"
+edition = "2021"
+publish = false
+
+# No dependencies. The "fuzzing lab" here is property testing with a seeded LCG
+# (same idea as proptest/cargo-fuzz, no toolchain); SPEC points at the real tools.
+[dependencies]
