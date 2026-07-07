@@ -10,14 +10,14 @@
 //! replace them with what you observed.
 
 /// The UDP port a face binds to in ndn-fwd's default config.
-pub const DEFAULT_UDP_PORT: u16 = 0;
+pub const DEFAULT_UDP_PORT: u16 = 6363;
 
 /// The port the WebSocket face binds to in the default config.
-pub const WEBSOCKET_PORT: u16 = 0;
+pub const WEBSOCKET_PORT: u16 = 9696;
 
 /// The content store's capacity, in megabytes, per the default config.
-pub const CS_CAPACITY_MB: u32 = 0;
+pub const CS_CAPACITY_MB: u32 = 64;
 
 /// The management (control) Unix-socket path the default config uses.
 /// (Worth noting for your journal: it is NOT the path the CLI tools default to.)
-pub const MGMT_SOCKET: &str = "";
+pub const MGMT_SOCKET: &str = "/run/ndn-fwd/ndn-fwd.sock";

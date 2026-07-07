@@ -22,14 +22,14 @@ macro_rules! tlv_registry {
 
         /// The type name for a value, if the value is a known type.
         pub fn name_of(value: u64) -> Option<&'static str> {
-            let _ = value;
-            todo!("repeat over the pairs: if value == $value, return Some(stringify!($name)) — see HINTS")
+            $( if value == $value { return Some(stringify!($name)); } )*
+            None
         }
 
         /// The value for a type name, if the name is a known type.
         pub fn value_of(name: &str) -> Option<u64> {
-            let _ = name;
-            todo!("repeat over the pairs: if name == stringify!($name), return Some($value) — see HINTS")
+            $( if name == stringify!($name) { return Some($value); } )*
+            None
         }
     };
 }
@@ -52,9 +52,9 @@ tlv_registry! {
 #[macro_export]
 macro_rules! tlv {
     ( $t:expr, [ $( $b:expr ),* $(,)? ] ) => {{
-        // TODO: build the value bytes, then a Vec of [type, length, ...value].
-        // This placeholder compiles (a typed empty Vec) but is wrong, so the
-        // tests are red until you replace it. See HINTS.
-        Vec::<u8>::new()
+        let value: Vec<u8> = vec![ $( $b ),* ];
+        let mut out = vec![$t, value.len() as u8];
+        out.extend(value);
+        out
     }};
 }

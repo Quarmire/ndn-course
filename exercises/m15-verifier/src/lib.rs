@@ -78,8 +78,33 @@ fn covers(prefix: &str, name: &str) -> bool {
 /// Decide whether `action` is authorized, running the checks in order and letting
 /// the first failure decide. See SPEC/HINTS for the exact step order + reasons.
 pub fn verify(action: &Action, ctx: &VerifierContext) -> VerifyResult {
-    let _ = (action, ctx);
-    todo!("the short-circuit pipeline: schema → grant-fetched? → revoked → expired → actor → scope → default-refuse — see HINTS")
+    if action.schema_version != ctx.supported_schema {
+        return VerifyResult::Deny(DenyReason::UnsafeSchemaVersion);
+    }
+    let grant = match ctx.grants.get(&action.authorizing_grant) {
+        Some(g) => g,
+        None => {
+            return VerifyResult::Unresolved {
+                missing_grant: action.authorizing_grant,
+            }
+        }
+    };
+    if ctx.revoked.contains(&action.authorizing_grant) {
+        return VerifyResult::Deny(DenyReason::GrantRevoked);
+    }
+    if grant.expiry <= ctx.now {
+        return VerifyResult::Deny(DenyReason::GrantExpired);
+    }
+    if action.actor != grant.holder {
+        return VerifyResult::Deny(DenyReason::ActorMismatch);
+    }
+    if !covers(&grant.scope_prefix, &action.scope) {
+        return VerifyResult::Deny(DenyReason::ScopeViolation);
+    }
+    if !grant.allowed_actions.contains(&action.action_type) {
+        return VerifyResult::Deny(DenyReason::ActionNotPermitted);
+    }
+    VerifyResult::Accept
 }
 
 /// A trust keyring: name prefixes mapped to the anchor (key/policy) that governs them.
@@ -97,7 +122,10 @@ impl TrustContext {
     /// The anchor that governs `name`: among all whose prefix covers `name`, the
     /// one with the LONGEST (most-specific) prefix wins. `None` if none match.
     pub fn anchor_for(&self, name: &str) -> Option<&str> {
-        let _ = name;
-        todo!("keep the anchors whose prefix covers `name`, take the longest — see HINTS")
+        self.anchors
+            .iter()
+            .filter(|(prefix, _)| covers(prefix, name))
+            .max_by_key(|(prefix, _)| prefix.split('/').filter(|s| !s.is_empty()).count())
+            .map(|(_, anchor)| anchor.as_str())
     }
 }

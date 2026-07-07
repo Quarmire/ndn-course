@@ -43,8 +43,10 @@ impl Ord for NameComponent {
     fn cmp(&self, other: &Self) -> Ordering {
         // The canonical NDN component order — NOT what a struct `derive` gives you.
         // See SPEC and HINTS: type first, then LENGTH, then content.
-        let _ = other;
-        todo!("order by type, then by value LENGTH, then by content bytes")
+        self.typ
+            .cmp(&other.typ)
+            .then_with(|| self.value.len().cmp(&other.value.len()))
+            .then_with(|| self.value.cmp(&other.value))
     }
 }
 
@@ -87,8 +89,13 @@ impl Name {
     /// True if `prefix` is a name-prefix of `self`: it has no more components
     /// than `self`, and each of its components equals the matching leading one.
     pub fn has_prefix(&self, prefix: &Name) -> bool {
-        let _ = prefix;
-        todo!("reject a longer prefix, then compare leading components")
+        if prefix.len() > self.len() {
+            return false;
+        }
+        self.components
+            .iter()
+            .zip(prefix.components())
+            .all(|(a, b)| a == b)
     }
 }
 
@@ -101,8 +108,7 @@ impl PartialOrd for Name {
 impl Ord for Name {
     fn cmp(&self, other: &Self) -> Ordering {
         // Lexicographic over components, using NameComponent's canonical order.
-        let _ = other;
-        todo!("compare component-by-component — the standard library does this in one call")
+        self.components.cmp(&other.components)
     }
 }
 
@@ -111,8 +117,13 @@ impl fmt::Display for Name {
     /// root name is just `/`. (A real NDN URI percent-encodes and marks component
     /// types — this is the readable subset.)
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let _ = f;
-        todo!("write a '/' before each component's value — see HINTS")
+        if self.components.is_empty() {
+            return write!(f, "/");
+        }
+        for c in &self.components {
+            write!(f, "/{}", String::from_utf8_lossy(&c.value))?;
+        }
+        Ok(())
     }
 }
 
@@ -120,7 +131,10 @@ impl From<&str> for Name {
     /// Parse `/a/b/c` into generic components. Empty segments (a leading slash,
     /// doubled slashes, a trailing slash) are skipped.
     fn from(uri: &str) -> Self {
-        let _ = uri;
-        todo!("split on '/', skip empty segments, each segment → a generic component")
+        Name::from_components(
+            uri.split('/')
+                .filter(|s| !s.is_empty())
+                .map(|s| NameComponent::generic(s.as_bytes().to_vec())),
+        )
     }
 }

@@ -14,21 +14,21 @@
 
 /// The file where a PIT (Pending Interest Table) entry is created when an
 /// Interest arrives and misses the table.
-pub const PIT_CREATE_FILE: &str = "";
+pub const PIT_CREATE_FILE: &str = "crates/forwarding/ndn-engine/src/stages/pit.rs";
 
 /// The file where a Data packet is inserted into the content store — and where
 /// the `ctx.verified` flag decides whether it is allowed to be cached at all.
-pub const CS_INSERT_FILE: &str = "";
+pub const CS_INSERT_FILE: &str = "crates/forwarding/ndn-engine/src/stages/cs.rs";
 
 /// The file that drives the forwarding pipeline: the ordered stage calls an
 /// Interest (or Data packet) passes through — the real code, not the ASCII diagram.
-pub const PIPELINE_FILE: &str = "";
+pub const PIPELINE_FILE: &str = "crates/forwarding/ndn-engine/src/dispatcher/pipeline.rs";
 
 // ── the machine strand: what does a real type cost? ─────────────────────────
 // MEASURE these with std::mem::size_of — don't guess. HINTS shows you how.
 
 /// `std::mem::size_of::<ndn_foundation_types::Hash>()`.
-pub const SIZE_OF_HASH: usize = 0;
+pub const SIZE_OF_HASH: usize = 32;
 
 /// `std::mem::size_of::<ndn_foundation_types::NameComponent>()`.
-pub const SIZE_OF_NAME_COMPONENT: usize = 0;
+pub const SIZE_OF_NAME_COMPONENT: usize = 40;

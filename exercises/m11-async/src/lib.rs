@@ -109,20 +109,29 @@ impl Future for Countdown {
     type Output = u64;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<u64> {
-        let _ = cx;
-        todo!("no polls left → Ready(value); else decrement, ask to be re-polled, and Pending — see HINTS")
+        let this = self.get_mut();
+        if this.remaining == 0 {
+            Poll::Ready(this.value)
+        } else {
+            this.remaining -= 1;
+            cx.waker().wake_by_ref();
+            Poll::Pending
+        }
     }
 }
 
 /// Await one `Countdown` per value and return the sum of the values.
 pub async fn accumulate(values: Vec<u64>) -> u64 {
-    let _ = values;
-    todo!("await a Countdown for each value in a loop, adding up the results — see HINTS")
+    let mut total = 0;
+    for v in values {
+        total += Countdown::new(2, v).await;
+    }
+    total
 }
 
 /// Await two `Countdown`s CONCURRENTLY with `join`, and return the sum of their
 /// values. Both futures make progress on the same thread — no extra threads.
 pub async fn both(a: u64, b: u64) -> u64 {
-    let _ = (a, b);
-    todo!("join two Countdowns, await the pair, add the two results — see HINTS")
+    let (x, y) = join(Countdown::new(3, a), Countdown::new(3, b)).await;
+    x + y
 }

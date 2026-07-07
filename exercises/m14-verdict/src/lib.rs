@@ -56,8 +56,13 @@ pub enum SpatialVerdict {
 /// - `estimate + margin <  threshold` → `NotCovered`
 /// - otherwise the threshold is inside the band → `Unresolved`
 pub fn verdict(c: Coverage, threshold: f64) -> SpatialVerdict {
-    let _ = (c, threshold);
-    todo!("the three-zone check above — see HINTS")
+    if c.estimate - c.margin >= threshold {
+        SpatialVerdict::Covered
+    } else if c.estimate + c.margin < threshold {
+        SpatialVerdict::NotCovered
+    } else {
+        SpatialVerdict::Unresolved
+    }
 }
 
 /// An authorization answer. `Unresolved` is NOT a disguised `Refused`: it carries
@@ -79,6 +84,13 @@ pub enum Verdict {
 /// first-class — it must carry the three numbers that couldn't be separated, and it
 /// must NOT be turned into `Refused`.
 pub fn authorize(c: Coverage, threshold: f64) -> Verdict {
-    let _ = (c, threshold);
-    todo!("map the three zones to Authorized / Refused / Unresolved{{..}} — see HINTS")
+    match verdict(c, threshold) {
+        SpatialVerdict::Covered => Verdict::Authorized,
+        SpatialVerdict::NotCovered => Verdict::Refused,
+        SpatialVerdict::Unresolved => Verdict::Unresolved {
+            estimate: c.estimate,
+            margin: c.margin,
+            threshold,
+        },
+    }
 }

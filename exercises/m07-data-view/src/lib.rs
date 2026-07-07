@@ -65,8 +65,19 @@ impl<'a> DataView<'a> {
     /// The VALUE of the first sub-element whose type is `type_num`, borrowed from
     /// the buffer. This is the lazy heart: it scans on demand and copies nothing.
     pub fn find(&self, type_num: u64) -> Option<&'a [u8]> {
-        let _ = type_num;
-        todo!("walk the inner TLVs; return the value of the first whose type matches — see HINTS")
+        let mut rest = self.inner;
+        while !rest.is_empty() {
+            let (typ, n1) = decode_varu64(rest)?;
+            let (len, n2) = decode_varu64(&rest[n1..])?;
+            let start = n1 + n2;
+            let end = start + len as usize;
+            let value = rest.get(start..end)?;
+            if typ == type_num {
+                return Some(value);
+            }
+            rest = &rest[end..];
+        }
+        None
     }
 
     /// The Name field's bytes. (provided — an example of using `find`)
@@ -82,13 +93,13 @@ impl<'a> DataView<'a> {
     /// The content as text — BORROWED when it is already valid UTF-8, OWNED only
     /// when lossy replacement was needed. `None` if there is no content.
     pub fn content_as_text(&self) -> Option<Cow<'a, str>> {
-        todo!("std has a function that returns exactly this Cow — see HINTS")
+        self.content().map(String::from_utf8_lossy)
     }
 
     /// Copy the content into an owned, cheaply-shareable handle that can outlive
     /// the buffer `'a`. This copy is the price of escaping the borrow. `None` if
     /// there is no content.
     pub fn to_owned_content(&self) -> Option<Bytes> {
-        todo!("copy the content bytes into a Bytes — see HINTS")
+        self.content().map(Bytes::copy_from_slice)
     }
 }

@@ -62,21 +62,33 @@ impl ShardedPit {
     /// The shard responsible for `name` — the only lock this operation should take.
     #[allow(dead_code)] // until `insert`/`take` call it
     fn shard_for(&self, name: &[u8]) -> &Shard {
-        let _ = name;
-        todo!("index self.shards by hash_name(name) modulo the shard count — see HINTS")
+        &self.shards[(hash_name(name) % self.shards.len() as u64) as usize]
     }
 
     /// Record that `face` is waiting for `name` (append it to that name's entry).
     pub fn insert(&self, name: &[u8], face: FaceId) {
-        let _ = (name, face);
-        todo!("lock the right shard, then add `face` to the entry for `name` — see HINTS")
+        self.shard_for(name)
+            .lock()
+            .unwrap()
+            .entry(name.to_vec())
+            .or_default()
+            .push(face);
     }
 
     /// Satisfy `name`: remove its entry and return the faces that were waiting
     /// (empty if there were none). A found entry is a hit; nothing found is a miss.
     pub fn take(&self, name: &[u8]) -> Vec<FaceId> {
-        let _ = name;
-        todo!("lock the shard, remove the entry, and bump hits or misses — see HINTS")
+        let removed = self.shard_for(name).lock().unwrap().remove(name);
+        match removed {
+            Some(faces) => {
+                self.hits.fetch_add(1, Ordering::Relaxed);
+                faces
+            }
+            None => {
+                self.misses.fetch_add(1, Ordering::Relaxed);
+                Vec::new()
+            }
+        }
     }
 
     /// How many `take`s found a waiting entry. (provided)

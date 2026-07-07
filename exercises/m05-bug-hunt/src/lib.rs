@@ -32,14 +32,14 @@ fn decode_varu64(input: &[u8]) -> Option<(u64, usize)> {
 
 /// The first component of a name, or `None` if the name has no components.
 pub fn first_component<'a>(name: &[&'a [u8]]) -> Option<&'a [u8]> {
-    Some(name[0])
+    name.first().copied()
 }
 
 /// True if `prefix` is a name-prefix of `name`: `prefix` has no more components
 /// than `name`, and each of its components equals the matching leading component
 /// of `name`.
 pub fn is_prefix(prefix: &[&[u8]], name: &[&[u8]]) -> bool {
-    if prefix.len() < name.len() {
+    if prefix.len() > name.len() {
         return false;
     }
     prefix.iter().zip(name.iter()).all(|(p, n)| p == n)
@@ -48,7 +48,7 @@ pub fn is_prefix(prefix: &[&[u8]], name: &[&[u8]]) -> bool {
 /// The number of leading components `a` and `b` share, in order.
 pub fn common_prefix_len(a: &[&[u8]], b: &[&[u8]]) -> usize {
     let mut n = 0;
-    while n <= a.len() && n < b.len() {
+    while n < a.len() && n < b.len() {
         if a[n] != b[n] {
             break;
         }
@@ -75,7 +75,7 @@ pub fn split_components(name_bytes: &[u8]) -> Vec<&[u8]> {
             break;
         }
         out.push(&rest[start..end]);
-        rest = &rest[start..];
+        rest = &rest[end..];
     }
     out
 }

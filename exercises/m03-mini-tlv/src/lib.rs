@@ -124,14 +124,27 @@ impl<'a> TlvReader<'a> {
     /// Read the next element: its type number and a **borrowed** value slice.
     /// Advances the cursor past the whole element.
     pub fn read(&mut self) -> Result<(u64, &'a [u8]), TlvError> {
-        todo!("decode the type VAR-NUMBER, then the length, then borrow `length` value bytes — see HINTS")
+        let bytes = self.rest;
+        let (type_num, n1) = decode_varu64(bytes)?;
+        let (length, n2) = decode_varu64(&bytes[n1..])?;
+        let off = n1 + n2;
+        let end = off + length as usize;
+        let value = bytes.get(off..end).ok_or(TlvError::UnexpectedEnd)?;
+        self.rest = &bytes[end..];
+        Ok((type_num, value))
     }
 
     /// Read the next element and require it to be `expected`, returning just its
     /// value. On a mismatch, nothing is consumed and you get `UnexpectedType`.
     pub fn read_type(&mut self, expected: u64) -> Result<&'a [u8], TlvError> {
-        let _ = expected;
-        todo!("read(), then compare the type — UnexpectedType carries both numbers")
+        let saved = self.rest;
+        let (found, value) = self.read()?;
+        if found == expected {
+            Ok(value)
+        } else {
+            self.rest = saved;
+            Err(TlvError::UnexpectedType { expected, found })
+        }
     }
 }
 
@@ -149,8 +162,9 @@ impl TlvWriter {
     /// Append one element: `type_num`, then `value.len()`, then the value bytes.
     /// Existing bytes in the buffer are never disturbed.
     pub fn write(&mut self, type_num: u64, value: &[u8]) {
-        let _ = (type_num, value);
-        todo!("encode the type, then the value's length, then extend with the value — see HINTS")
+        encode_varu64(type_num, &mut self.buf);
+        encode_varu64(value.len() as u64, &mut self.buf);
+        self.buf.extend_from_slice(value);
     }
 
     /// Consume the writer and hand back the encoded bytes. (provided)

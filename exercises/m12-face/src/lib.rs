@@ -84,16 +84,15 @@ impl ChannelTransport {
 
 impl Transport for ChannelTransport {
     fn id(&self) -> FaceId {
-        todo!("return this transport's id")
+        self.id
     }
 
     fn send_frame(&self, frame: Vec<u8>) -> Result<(), FaceError> {
-        let _ = frame;
-        todo!("send on the outbox; a send error means the peer is gone → FaceError::Closed — see HINTS")
+        self.outbox.send(frame).map_err(|_| FaceError::Closed)
     }
 
     fn recv_frame(&self) -> Option<Vec<u8>> {
-        todo!("take the next frame from the inbox without blocking — see HINTS")
+        self.inbox.try_recv().ok()
     }
 }
 
@@ -115,12 +114,16 @@ impl<T: Transport> LinkService<T> {
     /// Frame `payload` — tag it with our face id — and send it over the transport.
     /// The 4-byte big-endian face id is the whole "link header" in this analog.
     pub fn send_packet(&self, payload: &[u8]) -> Result<(), FaceError> {
-        let _ = payload;
-        todo!("prepend our id() as 4 big-endian bytes, then transport.send_frame — see HINTS")
+        let mut frame = self.transport.id().to_be_bytes().to_vec();
+        frame.extend_from_slice(payload);
+        self.transport.send_frame(frame)
     }
 
     /// Receive one packet if any: un-frame it into its payload and source face id.
     pub fn recv_packet(&self) -> Option<LinkFrame> {
-        todo!("recv a frame, split the 4-byte source header off the front — see HINTS")
+        let frame = self.transport.recv_frame()?;
+        let source = u32::from_be_bytes(frame[0..4].try_into().unwrap());
+        let payload = frame[4..].to_vec();
+        Some(LinkFrame { payload, source })
     }
 }

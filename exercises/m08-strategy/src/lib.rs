@@ -30,8 +30,11 @@ pub struct Multicast;
 
 impl Strategy for Multicast {
     fn choose(&self, incoming: FaceId, candidates: &[FaceId]) -> Vec<FaceId> {
-        let _ = (incoming, candidates);
-        todo!("every candidate that isn't `incoming`, in order — see HINTS")
+        candidates
+            .iter()
+            .copied()
+            .filter(|&f| f != incoming)
+            .collect()
     }
 
     fn name(&self) -> &str {
@@ -44,8 +47,12 @@ pub struct BestRoute;
 
 impl Strategy for BestRoute {
     fn choose(&self, incoming: FaceId, candidates: &[FaceId]) -> Vec<FaceId> {
-        let _ = (incoming, candidates);
-        todo!("the first candidate that isn't `incoming`, or none — see HINTS")
+        candidates
+            .iter()
+            .copied()
+            .find(|&f| f != incoming)
+            .into_iter()
+            .collect()
     }
 
     fn name(&self) -> &str {
@@ -76,12 +83,11 @@ where
     F: Fn(FaceId, &[FaceId]) -> Vec<FaceId>,
 {
     fn choose(&self, incoming: FaceId, candidates: &[FaceId]) -> Vec<FaceId> {
-        let _ = (incoming, candidates);
-        todo!("call the stored closure with the arguments — see HINTS")
+        (self.f)(incoming, candidates)
     }
 
     fn name(&self) -> &str {
-        todo!("return the label you were constructed with")
+        self.label
     }
 }
 
@@ -92,8 +98,7 @@ pub fn forward_static<S: Strategy>(
     incoming: FaceId,
     candidates: &[FaceId],
 ) -> Vec<FaceId> {
-    let _ = (strategy, incoming, candidates);
-    todo!("just call choose — the lesson is the generic bound, not the body")
+    strategy.choose(incoming, candidates)
 }
 
 /// Dispatch chosen at RUN time over a *heterogeneous* set of strategies — the
@@ -105,12 +110,15 @@ pub fn compare_strategies(
     incoming: FaceId,
     candidates: &[FaceId],
 ) -> Vec<(String, Vec<FaceId>)> {
-    let _ = (strategies, incoming, candidates);
-    todo!("map each boxed strategy to (its name as a String, its choice) — see HINTS")
+    strategies
+        .iter()
+        .map(|s| (s.name().to_string(), s.choose(incoming, candidates)))
+        .collect()
 }
 
 /// The process-wide default strategy, built once on first call and shared
 /// thereafter. (Here the value is cheap; the pattern earns its keep when it isn't.)
 pub fn default_strategy() -> &'static Multicast {
-    todo!("use a `static OnceLock<Multicast>` and `get_or_init` — see HINTS")
+    static DEFAULT: std::sync::OnceLock<Multicast> = std::sync::OnceLock::new();
+    DEFAULT.get_or_init(|| Multicast)
 }

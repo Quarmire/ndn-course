@@ -29,22 +29,40 @@ fn panic_message(payload: Box<dyn std::any::Any + Send>) -> String {
 /// its partial total back over a channel; the main thread adds the partials up.
 /// Assume `workers >= 1`. The result must equal `data.iter().sum()`.
 pub fn parallel_sum(data: &[u64], workers: usize) -> u64 {
-    let _ = (data, workers);
-    todo!("thread::scope, a chunk per worker, an mpsc channel of partial sums — see HINTS")
+    use std::sync::mpsc;
+    use std::thread;
+    let chunk = data.len().div_ceil(workers).max(1);
+    let (tx, rx) = mpsc::channel();
+    thread::scope(|s| {
+        for c in data.chunks(chunk) {
+            let tx = tx.clone();
+            s.spawn(move || {
+                let partial: u64 = c.iter().sum();
+                tx.send(partial).unwrap();
+            });
+        }
+    });
+    drop(tx);
+    rx.iter().sum()
 }
 
 /// Run each job on its own thread. A job that PANICS must not take down the others
 /// or the process: return `Ok(value)` for a job that returned normally, and
 /// `Err(message)` for one that panicked. Results stay in the jobs' original order.
 pub fn run_jobs(jobs: Vec<Box<dyn FnOnce() -> u64 + Send>>) -> Vec<Result<u64, String>> {
-    let _ = jobs;
-    todo!("spawn each job, then join each handle; join() returns Err on a panic — see HINTS")
+    use std::thread;
+    let handles: Vec<_> = jobs.into_iter().map(thread::spawn).collect();
+    handles
+        .into_iter()
+        .map(|h| h.join().map_err(panic_message))
+        .collect()
 }
 
 /// Run an external `program` with `args` to completion, capturing its stdout and
 /// exit code. `Ok((exit_code, stdout))`; `Err` if the program couldn't be launched
 /// at all (e.g. it doesn't exist).
 pub fn run_command(program: &str, args: &[&str]) -> std::io::Result<(Option<i32>, String)> {
-    let _ = (program, args);
-    todo!("std::process::Command::new(program).args(args).output() — see HINTS")
+    let output = std::process::Command::new(program).args(args).output()?;
+    let stdout = String::from_utf8_lossy(&output.stdout).into_owned();
+    Ok((output.status.code(), stdout))
 }

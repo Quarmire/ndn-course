@@ -144,7 +144,10 @@ fn non_minimal_encodings_are_rejected() {
 fn boundary_of_each_shape_is_minimal_not_rejected() {
     // The smallest value that legitimately NEEDS each wider shape.
     assert_eq!(decode_varu64(&[0xFD, 0x00, 0xFD]), Ok((253, 3)));
-    assert_eq!(decode_varu64(&[0xFE, 0x00, 0x01, 0x00, 0x00]), Ok((65_536, 5)));
+    assert_eq!(
+        decode_varu64(&[0xFE, 0x00, 0x01, 0x00, 0x00]),
+        Ok((65_536, 5))
+    );
     assert_eq!(
         decode_varu64(&[0xFF, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00]),
         Ok((4_294_967_296, 9))

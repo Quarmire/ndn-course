@@ -41,8 +41,7 @@ fn decode_varu64(input: &[u8]) -> Option<(u64, usize)> {
 /// type means you *cannot* build a new `Vec` and hand it back: you must return
 /// one of the slices you were given.
 pub fn longest_component<'a>(components: &[&'a [u8]]) -> Option<&'a [u8]> {
-    let _ = components;
-    todo!("return the longest slice, borrowed — see HINTS")
+    components.iter().copied().max_by_key(|c| c.len())
 }
 
 // ── Part B — the borrowed view ────────────────────────────────────────────────
@@ -63,7 +62,7 @@ impl<'a> NameView<'a> {
 
     /// Iterate the component VALUES, each borrowed from the original bytes.
     pub fn iter(&self) -> NameComponents<'a> {
-        todo!("hand the iterator the bytes to walk — see HINTS")
+        NameComponents { rest: self.bytes }
     }
 
     /// The i-th component's value, if it exists. (provided, in terms of `iter`)
@@ -96,7 +95,14 @@ impl<'a> Iterator for NameComponents<'a> {
     /// `None` to stop — at the end of the bytes, or on a malformed element (a
     /// lenient view stops rather than panicking).
     fn next(&mut self) -> Option<&'a [u8]> {
-        todo!("decode type, then length, then borrow `length` value bytes — like M3's read, but returning None to stop")
+        let bytes = self.rest;
+        let (_type_num, n1) = decode_varu64(bytes)?;
+        let (length, n2) = decode_varu64(&bytes[n1..])?;
+        let off = n1 + n2;
+        let end = off + length as usize;
+        let value = bytes.get(off..end)?;
+        self.rest = &bytes[end..];
+        Some(value)
     }
 }
 
@@ -106,6 +112,5 @@ impl<'a> Iterator for NameComponents<'a> {
 /// their common prefix. (NDN routing runs on this operation.) Build it from the
 /// two views; don't allocate.
 pub fn common_prefix_len(a: &NameView, b: &NameView) -> usize {
-    let _ = (a, b);
-    todo!("zip the two iterators and count the matching leading components")
+    a.iter().zip(b.iter()).take_while(|(x, y)| x == y).count()
 }
