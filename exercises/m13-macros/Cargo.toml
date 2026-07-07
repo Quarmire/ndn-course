@@ -1,0 +1,8 @@
+[package]
+name = "m13-macros"
+edition = "2021"
+publish = false
+
+# No dependencies. `macro_rules!` is built in. (Derive/attribute macros are
+# *procedural* macros — a separate crate type — which the SPEC points you to read.)
+[dependencies]
