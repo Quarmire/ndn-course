@@ -23,13 +23,17 @@ npm run preview  # preview the production build
 
 `node_modules/` and `dist/` are gitignored — only the source is committed.
 
-## Deploying
+## Deploying to GitHub Pages
 
-Set `site` (and, for a project subpath like GitHub Pages, `base`) in
-`astro.config.mjs`, then serve `dist/`. Setting `site` also enables the sitemap. On
-GitHub Pages, for example:
+`astro.config.mjs` is already set for a GitHub Pages **project site**
+(`site: 'https://quarmire.github.io'`, `base: '/ndn-course'`), and internal links are
+relative so they survive the base path. The workflow
+[`.github/workflows/deploy-site.yml`](../.github/workflows/deploy-site.yml) builds and
+publishes the site on every push that touches `course-site/**`.
 
-```js
-site: 'https://quarmire.github.io/ndn-course',
-base: '/ndn-course',
-```
+**One-time setup:** in the repo's **Settings → Pages**, set **Source** to
+**GitHub Actions**. Then push (or run the workflow manually) and it deploys to
+`https://quarmire.github.io/ndn-course/`.
+
+Deploying to a **user site** or a **custom domain** instead? Drop the `base` line (and
+adjust `site`); the relative links still work.

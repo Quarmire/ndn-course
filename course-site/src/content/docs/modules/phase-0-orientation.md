@@ -23,4 +23,4 @@ cached and why a `ctx.verified` flag gates it, and locate the real forwarding pi
 Then the Machine strand's first appearance — measure what real types cost in memory
 with `size_of`. Grep discipline and workspace anatomy are themselves the skill.
 
-Next: [Phase 1 →](/modules/phase-1-bytes/).
+Next: [Phase 1 →](../phase-1-bytes/).

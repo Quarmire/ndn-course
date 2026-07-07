@@ -41,4 +41,4 @@ The course is pinned to tagged snapshots of the real repos, and a scheduled CI j
 rebuilds every reference solution against those pins — so drift becomes a red build,
 not a silent surprise.
 
-Next: [the journey begins →](/modules/phase-0-orientation/).
+Next: [the journey begins →](../modules/phase-0-orientation/).

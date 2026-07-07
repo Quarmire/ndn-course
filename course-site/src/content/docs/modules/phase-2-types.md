@@ -25,4 +25,4 @@ generics (monomorphized) vs `dyn` (a vtable, for heterogeneity), closures behind
 `Fn` bound, `OnceLock`, and object-safety taught through the workspace's deliberately
 _non_-object-safe `Face` trait. The course's first property/fuzz lab lands here.
 
-Next: [Phase 3 →](/modules/phase-3-concurrency/).
+Next: [Phase 3 →](../phase-3-concurrency/).

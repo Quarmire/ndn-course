@@ -4,8 +4,10 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	// Set this to your deploy URL (e.g. GitHub Pages) to enable the sitemap.
-	// site: 'https://quarmire.github.io/ndn-course',
+	// GitHub Pages project site: served at https://<user>.github.io/<repo>/.
+	// Change these if you deploy to a user site or a custom domain (drop `base`).
+	site: 'https://quarmire.github.io',
+	base: '/ndn-course',
 	integrations: [
 		starlight({
 			title: 'ndn-course',

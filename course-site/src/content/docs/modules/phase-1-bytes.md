@@ -31,4 +31,4 @@ and you hunt them with backtraces, minimization, and comparison to known-good, l
 each in your bug journal. From here, comment quality and observability are graded on
 every exercise.
 
-Next: [Phase 2 →](/modules/phase-2-types/).
+Next: [Phase 2 →](../phase-2-types/).

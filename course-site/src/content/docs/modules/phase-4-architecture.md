@@ -27,4 +27,4 @@ security bug. A short-circuiting authorization pipeline with a typed reason taxo
 a longest-prefix trust keyring, and crypto hygiene (why you never compare a signature
 with `==`).
 
-Next: [the capstones →](/capstones/).
+Next: [the capstones →](../../capstones/).

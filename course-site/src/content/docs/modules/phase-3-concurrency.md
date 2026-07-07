@@ -31,4 +31,4 @@ LinkService** split (an in-memory channel transport, the way the engine ships on
 and learn the _process_ — feature flags, the scope buckets and dependency rules, and a
 PR narrative a reviewer can say yes to.
 
-Next: [Phase 4 →](/modules/phase-4-architecture/).
+Next: [Phase 4 →](../phase-4-architecture/).

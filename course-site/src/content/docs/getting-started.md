@@ -43,4 +43,4 @@ but it's recorded honestly.
   calendar, are the authority.
 - **Basic Rust syntax.** Everything else, you build.
 
-Next: [how the course works →](/the-course/).
+Next: [how the course works →](../the-course/).
