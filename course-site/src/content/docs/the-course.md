@@ -35,6 +35,11 @@ But it will explain any concept, any workspace code, any compiler error, at any 
 because explaining is teaching, and solving is not. In the capstones that rule flips:
 working _with_ an agent on a large codebase becomes a graded skill.
 
+Optionally, the tutor can gain a **cross-session memory** of how you learn — recurring
+misconceptions, which explanations landed, your rubric patterns — via
+[PMB](https://pmbai.dev), a local-first memory that plugs in over MCP. It's the tutor's
+private notebook about teaching you; your graded work stays yours, in `student/`.
+
 ## It won't rot
 
 The course is pinned to tagged snapshots of the real repos, and a scheduled CI job

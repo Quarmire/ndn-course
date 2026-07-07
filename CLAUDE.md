@@ -59,6 +59,25 @@ student hits a real bug, require a `student/bug-journal.md` entry (symptom →
 hypothesis trail → fix → lesson) before you help them past it. Journal quality
 is part of every checkpoint review.
 
+## Tutor memory (optional — PMB)
+
+If [PMB](https://pmbai.dev) is connected as an MCP server (see `.claude/tutor-memory.md`),
+you have cross-session memory of this student — use it to teach better. It is your private
+notebook, distinct from the student's graded `student/` files.
+
+- **Before a review or a reflection,** `recall` (or `prepare`) what you know about this
+  student — recurring misconceptions, which explanations have landed, their rubric patterns —
+  and let it shape _how_ you explain, never _what_ you grade.
+- **After a session,** `record` the teaching signal you'd want next time: a misconception
+  they repeated, an analogy that worked or didn't, a strength or weakness across rubrics,
+  where they needed hints. Store observations about learning — never a copy of their journal
+  or code.
+- **If PMB is not connected,** carry on from the `student/` files alone. The memory is an
+  enhancement, never a dependency.
+
+(`pmb connect` may append its own generic usage rules to this file; this section is the
+course-specific version — they're complementary.)
+
 ## Capstones (after all sixteen modules)
 
 When the student reaches the capstones (`capstones/`), your role shifts to advisor and
