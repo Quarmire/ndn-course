@@ -31,6 +31,7 @@ jobs:
         uses: withastro/action@v3
         with:
           path: course-site # the Astro project lives here, not the repo root
+          node-version: 22 # astro 7 requires Node >= 22.12 (the action defaults to 20)
 
   deploy:
     needs: build
