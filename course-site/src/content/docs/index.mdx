@@ -1,0 +1,61 @@
+---
+title: Learn Rust where it is real
+description: An applied Rust course taught inside a working named-data networking stack — sixteen modules and two capstones, and you leave as a contributor.
+template: splash
+hero:
+  tagline: Sixteen modules and two capstones inside a working named-data networking stack. You start by running the forwarder; you finish by adding to it — and defending your choices.
+  actions:
+    - text: Start the course
+      link: /getting-started/
+      icon: right-arrow
+    - text: The decoded-packet tour
+      link: /course-landing.html
+      icon: external
+      variant: minimal
+    - text: GitHub
+      link: https://github.com/Quarmire/ndn-course
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Five phases, from "run it" to "reason about it"
+
+The course is a staircase against a real codebase. Each phase ends with an identity —
+something you can now *say you are*.
+
+<CardGrid>
+	<Card title="Phase 0 — Orientation" icon="rocket">
+		Run the forwarder; read a multi-crate workspace. **"I can run it and find things."**
+	</Card>
+	<Card title="Phase 1 — Bytes, memory, bugs" icon="seti:rust">
+		Build a codec from scratch, borrow instead of copy, hunt planted bugs.
+		**"I can build, test, and debug."**
+	</Card>
+	<Card title="Phase 2 — Types that carry meaning" icon="puzzle">
+		Design an API, parse without copying, choose static vs dynamic dispatch.
+		**"I can design and prove."**
+	</Card>
+	<Card title="Phase 3 — Threads, processes, async" icon="random">
+		Threads, shared state, and async — built by hand before any framework hides them.
+		**"I can add a real component."**
+	</Card>
+	<Card title="Phase 4 — Architecture & NDF" icon="approve-check">
+		Macros, an architecture with a fourth verdict, a real verifier.
+		**"I can decide and defend."**
+	</Card>
+	<Card title="Two capstones" icon="star">
+		Build an app, or land a PR-quality contribution — proposal-gated, and defended in a viva.
+	</Card>
+</CardGrid>
+
+## How it feels
+
+You never read the Rust Book cover to cover. You run `ndn-fwd`, poke it, and by
+module 3 you've written the parser for the packets it speaks. Every exercise is
+graded three ways — mechanical tests, a rubric review by an LLM tutor, and a spoken
+reflection — and the whole thing is pinned to tagged snapshots so it never rots out
+from under you.
+
+[Start with the three-command quick start →](/getting-started/)
