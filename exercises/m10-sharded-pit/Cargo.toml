@@ -1,0 +1,8 @@
+[package]
+name = "m10-sharded-pit"
+edition = "2021"
+publish = false
+
+# No dependencies. Arc, Mutex, and atomics are all std. (SPEC points at DashMap,
+# which the real engine uses, as the production version of what you build here.)
+[dependencies]
