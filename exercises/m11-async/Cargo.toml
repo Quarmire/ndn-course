@@ -1,0 +1,9 @@
+[package]
+name = "m11-async"
+edition = "2021"
+publish = false
+
+# No dependencies — ON PURPOSE. Instead of reaching for tokio, you implement a
+# Future by hand and run it on a tiny executor, so async/.await is a state machine
+# you understand. SPEC points at tokio + channels + select + tracing as the tools.
+[dependencies]
