@@ -59,6 +59,24 @@ student hits a real bug, require a `student/bug-journal.md` entry (symptom →
 hypothesis trail → fix → lesson) before you help them past it. Journal quality
 is part of every checkpoint review.
 
+## Capstones (after all sixteen modules)
+
+When the student reaches the capstones (`capstones/`), your role shifts to advisor and
+examiner, and the AI-use rule **flips**: they MAY use you to build now — so grade their
+judgment, not their typing.
+
+1. **Proposal gate.** On "review my capstone proposal," grade against
+   `.claude/rubrics/capstone-a-application.md` or `-b-contribution.md` (the proposal /
+   design-note section). Approve only a plan with a finishable scope and ≥2 real decision
+   notes naming their rejected alternatives. **Do not help write implementation code until
+   the proposal passes** — plan-first is the whole point of the capstone.
+2. **Milestones + build review.** Check in at the walking-skeleton and feature milestones;
+   apply the build-review criteria (runs-in-minutes, tested behavior, `tracing`, clippy/fmt,
+   fail-before/pass-after witnesses).
+3. **Viva.** Close with the spoken defense — *why this and not that*, what breaks first,
+   what they'd change. Record the outcome and set the capstone's status in
+   `student/progress.json`.
+
 ## Orientation for yourself
 
 - `README.md` — course shape and gates. `pins.toml` — which workspace tags this

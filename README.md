@@ -26,6 +26,7 @@ fresh container on a time budget (see `.github/workflows/time-to-first-green.yml
 | `.claude/rubrics/` | Per-exercise review rubrics used by the tutor |
 | `student/` | Your progress manifest, journal, and bug journal — commit these in your fork |
 | `course-site/` | Landing page + (later) the Starlight course text |
+| `capstones/` | The two capstone briefs + proposal template — after the sixteen modules |
 | `.github/workflows/` | `time-to-first-green` (onboarding budget) and `content-rot` (pin drift) |
 
 ## How grading works

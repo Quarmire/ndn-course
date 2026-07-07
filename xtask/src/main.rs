@@ -163,8 +163,8 @@ fn cmd_doctor() -> i32 {
             name = rest.trim_end_matches(']').to_string();
         } else if line.starts_with("tag") && !name.is_empty() {
             let tag = line
-                .splitn(2, '=')
-                .nth(1)
+                .split_once('=')
+                .map(|x| x.1)
                 .unwrap_or("")
                 .trim()
                 .split('#')
@@ -184,7 +184,9 @@ fn cmd_doctor() -> i32 {
                 }
                 (true, false) => println!("  ✓ ../{name} present (course pins {tag})"),
                 (false, true) => {
-                    println!("  ~ ../{name} missing and pin not yet cut — needed for forwarder labs");
+                    println!(
+                        "  ~ ../{name} missing and pin not yet cut — needed for forwarder labs"
+                    );
                     warnings += 1;
                 }
                 (false, false) => {
@@ -248,7 +250,11 @@ fn cmd_next() -> i32 {
             0
         }
         None => {
-            println!("all exercises complete — go build the capstone.");
+            println!("all sixteen modules complete. Now the capstones:");
+            println!("  brief: capstones/README.md");
+            println!("  A — the application   · capstones/capstone-a-application.md");
+            println!("  B — the contribution  · capstones/capstone-b-contribution.md");
+            println!("Draft a proposal (capstones/PROPOSAL-TEMPLATE.md), then ask the tutor to review it.");
             0
         }
     }
@@ -311,7 +317,10 @@ fn cmd_hint(arg: Option<String>) -> i32 {
         .as_u64()
         .unwrap_or(0) as usize;
     if used >= sections.len() {
-        println!("no more hints for {pkg} ({} used). Talk to the tutor — explaining is always allowed.", sections.len());
+        println!(
+            "no more hints for {pkg} ({} used). Talk to the tutor — explaining is always allowed.",
+            sections.len()
+        );
         return 0;
     }
     println!("## {}", sections[used].trim_end());
