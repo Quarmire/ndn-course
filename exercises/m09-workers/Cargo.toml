@@ -1,0 +1,8 @@
+[package]
+name = "m09-workers"
+edition = "2021"
+publish = false
+
+# No dependencies. Everything here is std: threads, scopes, channels, and
+# processes. (SPEC points at rayon for the data-parallel version.)
+[dependencies]
