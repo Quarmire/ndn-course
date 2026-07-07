@@ -1,0 +1,9 @@
+[package]
+name = "m15-verifier"
+edition = "2021"
+publish = false
+
+# No dependencies. This is a faithful (simplified) analog of ndf-core's
+# verify_action pipeline (ndf-rs/refounding/ndf-core/src/verify.rs) — std only,
+# no real crypto. Ed25519 signing/verification is covered as reading.
+[dependencies]
